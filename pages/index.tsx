@@ -8,7 +8,7 @@ import "tailwindcss/tailwind.css";
 const IndexPage = () => {
   const [url, setUrl] = React.useState("");
   const { status, connectWallet, walletAddress } = useWallet();
-  const { gifs, submitGif } = useGifs(walletAddress);
+  const { gifs, submitGif, createGifAccount } = useGifs(walletAddress);
 
   const renderNotConnectedContainer = () => (
     <button
@@ -20,8 +20,10 @@ const IndexPage = () => {
   );
 
   const submitMyGif = () => {
-    submitGif(url);
-    setUrl("");
+    if (url) {
+      submitGif(url);
+      setUrl("");
+    }
   };
 
   const renderConnectedContainer = () => (
@@ -42,9 +44,12 @@ const IndexPage = () => {
         </button>
       </div>
       <div className="grid grid-flow-row grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 px-2">
-        {gifs.map((gif) => (
-          <div className="m-2" key={gif}>
-            <img src={gif} alt={gif} />
+        {gifs?.map((gif, index) => (
+          <div className="m-2 flex flex-col" key={index}>
+            <img src={gif.gifLink} alt={gif.gifLink} />
+            <span className="w-full text-center">
+              {gif.userAddress.toString()}
+            </span>
           </div>
         ))}
       </div>
@@ -64,6 +69,17 @@ const IndexPage = () => {
     </>
   );
 
+  const initializeGame = () => {
+    return (
+      <button
+        className="mt-4 md:mt-0 bg-gradient-to-r from-green-400 to-blue-500 hover:from-pink-500 hover:to-yellow-500 py-2 px-4 rounded-md"
+        onClick={createGifAccount}
+      >
+        Do One-Time Initialization For GIF Program Account
+      </button>
+    );
+  };
+
   const renderContent = () => {
     switch (status) {
       case WalletStatus.NOT_PRESENT:
@@ -73,6 +89,9 @@ const IndexPage = () => {
       case WalletStatus.ERROR:
         return renderNotConnectedContainer();
       case WalletStatus.CONNECTED:
+        if (!gifs) {
+          return initializeGame();
+        }
         return renderConnectedContainer();
       default:
         return <h1>Loading...</h1>;

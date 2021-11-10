@@ -4,9 +4,12 @@
     "dev": "next",
     "build": "next build",
     "start": "next start",
-    "type-check": "tsc"
+    "type-check": "tsc",
+    "generate-key-pair": "node ./scripts/generateKeyPair.js"
   },
   "dependencies": {
+    "@project-serum/anchor": "^0.18.0",
+    "@solana/web3.js": "^1.30.2",
     "next": "latest",
     "react": "^17.0.2",
     "react-dom": "^17.0.2"
